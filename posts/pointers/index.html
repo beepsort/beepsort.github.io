@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en" dir="auto">
+
+<head><meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<meta name="robots" content="index, follow">
+<title>Pointers | Beepsort Blog</title>
+<meta name="keywords" content="" />
+<meta name="description" content="I see many people getting confused regarding pointers and over time I have noticed some common areas people get confused, so I decided to write a post explaining some of these areas.
+The Theory behind Pointers Some background definitions Lifetimes A lifetime describes when a variable is first given space in the program&rsquo;s memory and when that memory will be released.
+The Stack The stack is the most important area of memory.">
+<meta name="author" content="">
+<link rel="canonical" href="https://beepsort.github.io/posts/pointers/" />
+<link crossorigin="anonymous" href="/assets/css/stylesheet.min.c88963fe2d79462000fd0fb1b3737783c32855d340583e4523343f8735c787f0.css" integrity="sha256-yIlj/i15RiAA/Q&#43;xs3N3g8MoVdNAWD5FIzQ/hzXHh/A=" rel="preload stylesheet" as="style">
+<script defer crossorigin="anonymous" src="/assets/js/highlight.min.7680afc38aa6b15ddf158a4f3780b7b1f7dde7e91d26f073e6229bb7a0793c92.js" integrity="sha256-doCvw4qmsV3fFYpPN4C3sffd5&#43;kdJvBz5iKbt6B5PJI="
+    onload="hljs.initHighlightingOnLoad();"></script>
+<link rel="icon" href="https://beepsort.github.io/favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="https://beepsort.github.io/favicon-16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="https://beepsort.github.io/favicon-32x32.png">
+<link rel="apple-touch-icon" href="https://beepsort.github.io/apple-touch-icon.png">
+<link rel="mask-icon" href="https://beepsort.github.io/safari-pinned-tab.svg">
+<meta name="theme-color" content="#2e2e33">
+<meta name="msapplication-TileColor" content="#2e2e33">
+<meta name="generator" content="Hugo 0.91.2" />
+<noscript>
+    <style>
+        #theme-toggle,
+        .top-link {
+            display: none;
+        }
+
+    </style>
+    <style>
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --theme: rgb(29, 30, 32);
+                --entry: rgb(46, 46, 51);
+                --primary: rgb(218, 218, 219);
+                --secondary: rgb(155, 156, 157);
+                --tertiary: rgb(65, 66, 68);
+                --content: rgb(196, 196, 197);
+                --hljs-bg: rgb(46, 46, 51);
+                --code-bg: rgb(55, 56, 62);
+                --border: rgb(51, 51, 51);
+            }
+
+            .list {
+                background: var(--theme);
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-track {
+                background: 0 0;
+            }
+
+            .list:not(.dark)::-webkit-scrollbar-thumb {
+                border-color: var(--theme);
+            }
+        }
+
+    </style>
+</noscript><meta property="og:title" content="Pointers" />
+<meta property="og:description" content="I see many people getting confused regarding pointers and over time I have noticed some common areas people get confused, so I decided to write a post explaining some of these areas.
+The Theory behind Pointers Some background definitions Lifetimes A lifetime describes when a variable is first given space in the program&rsquo;s memory and when that memory will be released.
+The Stack The stack is the most important area of memory." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="https://beepsort.github.io/posts/pointers/" /><meta property="article:section" content="posts" />
+<meta property="article:published_time" content="2022-01-08T17:13:55&#43;00:00" />
+<meta property="article:modified_time" content="2022-01-08T17:13:55&#43;00:00" />
+
+<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Pointers"/>
+<meta name="twitter:description" content="I see many people getting confused regarding pointers and over time I have noticed some common areas people get confused, so I decided to write a post explaining some of these areas.
+The Theory behind Pointers Some background definitions Lifetimes A lifetime describes when a variable is first given space in the program&rsquo;s memory and when that memory will be released.
+The Stack The stack is the most important area of memory."/>
+
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BreadcrumbList",
+  "itemListElement": [
+    {
+      "@type": "ListItem",
+      "position":  1 ,
+      "name": "Posts",
+      "item": "https://beepsort.github.io/posts/"
+    }, 
+    {
+      "@type": "ListItem",
+      "position":  2 ,
+      "name": "Pointers",
+      "item": "https://beepsort.github.io/posts/pointers/"
+    }
+  ]
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Pointers",
+  "name": "Pointers",
+  "description": "I see many people getting confused regarding pointers and over time I have noticed some common areas people get confused, so I decided to write a post explaining some of these areas.\nThe Theory behind Pointers Some background definitions Lifetimes A lifetime describes when a variable is first given space in the program\u0026rsquo;s memory and when that memory will be released.\nThe Stack The stack is the most important area of memory.",
+  "keywords": [
+    
+  ],
+  "articleBody": "I see many people getting confused regarding pointers and over time I have noticed some common areas people get confused, so I decided to write a post explaining some of these areas.\nThe Theory behind Pointers Some background definitions Lifetimes A lifetime describes when a variable is first given space in the program’s memory and when that memory will be released.\nThe Stack The stack is the most important area of memory. Every function call will allocate some space on the stack to store it’s variables; this is called a function’s stack frame. After a function returns, it’s stack frame and all it’s variables are deleted and will potentially be overwritten by any other future function calls.\nVariables created on the stack are assigned a size at compilation time, this means your source code must know the specific size required to store it on the stack. The stack is much smaller than the heap and has more possibility of filling up (a stack overflow); it is also very fast compared to the heap, especially on modern processors.\nThe Heap The heap is a much larger area of memory than the stack. It stores data in an unordered manner, for any part of the program that requests to store data on the heap. Space on the heap must be allocated before use, so the area of the heap is known to be in use. After the data is no longer required to be stored on the heap, it needs to be deleted from the heap to allow the space to be used again for new data.\nDynamic sizing The size of a stack frame for a specific function is decided at compile time, this means all variables assigned on the stack need to have a predefined size. If we do not know the size of some data until the program runs, then we may need to use the heap to allocate the specific amount needed.\nSharing data If we want to access a single shared data resource at multiple points in the program, we can store the data on the heap and allow each area of the program to access the single location.\nControl over variable’s lifetime If we do not want a variable to be deleted after the function it was created within ends, then this may be a reason to use the heap instead of the stack.\nWhy use pointers? Reducing the amount of copying In C and C++, passing a value as a function parameter or assigning a value to a new variable will copy the direct value of the variable. In the case of large structs or objects, this can result in many unnecessary copies being made; as a result this can waste memory or slow down our code. This can also allow a function to modify the value of it’s parameter, and for that modification to apply outside of that function.\nUsing the heap We often do not want to allocate data on the stack and instead need to use the heap. When we use the heap, we must use pointers to access data stored on the heap, as well as control when the data is freed up from the heap.\nWhat is a pointer? When we create a variable, it is stored at a location specified by a memory address; a pointer is a variable that can store a memory address of another variable. Notice that a pointer is itself a variable; this means a pointer is subject to all the same details as a regular variable. Pointers need to be initialized just like regular variables, they can be stored on both the stack and heap, and they themselves can also have pointers point to them too! When we create a pointer, we are creating space to store a memory address, but not creating anything for the pointer to actually point to.\nPractical usage Pointer types int *a_ptr; This type definition says two things:\n *a means a is a pointer variable int means a points to an integer variable  Dereferencing int a = *a_ptr; We are using the * operator again, but this time it is in an expression rather than a type definition. When we use the * operator in an expression it behaves as the dereference operator. The dereference operator will take the value stored in the pointer (a memory address) and look at the location in memory at that memory address.\nIn this example, the program takes multiple steps:\n load the memory address stored at a_ptr read the value stored at the memory address store the value in b  It is also possible to write to the location of a pointer\n*a_ptr = 7; In this second example, the program performs the following:\n load the memory address stored at a_ptr store 7 as the value of the location pointed to by the memory address  Note that in both of these examples, we haven’t initialized the value of a_ptr. This is a big problem, as it means we are trying to access an undefined memory location. This could mean that our program tries to read/write to an area of memory it is not allowed to, which would cause a crash (segmentation fault); or even worse, our program could read/write an allowed part of our program’s memory and continue with corrupted data! To stop this, lets look at one of the ways we can assign a value to a pointer.\nAddress operator int a = 7; int *a_ptr = \u0026a; Here we use the address operator \u0026. The address operator will get the memory address of it’s operand. So like before, let’s break the program down:\n create a memory location to store an integer a create a memory location to store a pointer a_ptr store 7 as the value of a get the memory address of a as specified by \u0026a store the memory address of a as the value of a_ptr (remember a_ptr is itself a variable that holds a memory address as it’s value)  Arrays int arr[5] = {1,1,2,3,5}; In C, arrays are a special type of pointer, which has an additional size component as part of the type. When an array is passed to a function as a parameter, the type decays to a regular pointer (the size information is lost). Other than this, arrays are simply just pointers to the first element in the array.\nint arr[5] = {1,1,2,3,5}; *arr = 10; This would modify the first element (arr[0]) to be 10, leaving the array to be {10,2,3,4,5}.\nAddress arithmetic int arr[5] = {1,1,2,3,5}; int a = *(arr+2); int b = arr[2]; It is possible for us to manipulate the value of a pointer, which will modify the memory location that is being pointed to. In this example, both a and b will be the same value (3).\nBy adding 2 to the pointer, we move 2 elements forwards in memory and arrays are stored contiguously (the elements are stored directly one after another in memory). Address arithmetic modifies the memory address by increments the size of the data type being pointed to, in this case an integer, which is 4 bytes in most 64-bit machines.\nHeap allocation C malloc int *a_ptr = malloc(sizeof(int)); To use the heap we need to allocate space for our data, let’s break our program down again:\n create a memory location to store a pointer a_ptr call malloc and request memory on the heap to store a single integer receive a pointer from malloc to the allocated memory location store the returned pointer as the value of a_ptr  At this point we are free to use this memory location as we have with previous pointer variables, except it is stored on the heap instead of the stack now and has the trade offs mentioned earlier in the theory section.\nOne note regarding memory allocation with malloc, is memory allocation can fail if there is no space for the memory that was requested, in this circumstance malloc will return 0 (NULL).\nAllocating an array in C requires calculating the size of the data type, multiplied by the number of elements.\nint *a_ptr = malloc(4*sizeof(int)); This creates an array of 4 integers on the heap.\nfree As mentioned earlier, once we allocate memory on the heap, we also need to free it after we are finished with it, we do this using the free function.\nint *a_ptr = malloc(sizeof(int)); free(a_ptr); Calling free marks the memory we were previously using as being able to be used elsewhere. If we were not to do this, we can cause a memory leak; where memory usage of our program keeps growing until it potentially crashes.\nFreeing arrays is no different to any other data.\nC++ new C++ has it’s own version of the malloc function with the new keyword. It is somewhat similar to malloc, with a few differences:\n Initializes created objects by calling their constructors Throws an exception on memory allocation failure instead of returning 0 Does not require using sizeof() calculations Has a specific array syntax  Creating a heap allocated integer\nint *a_ptr = new int; Creating a heap allocated array of 4 integers\nint *a_ptr = new int[4]; delete C++ also has it’s own version of the free function with the delete keyword. Again it is similar to free, with a few differences:\n Calls object destructors Has a specific array syntax  Deleting a heap allocated variable\ndelete a_ptr; Deleting a heap allocated array\ndelete [] a_ptr; ",
+  "wordCount" : "1578",
+  "inLanguage": "en",
+  "datePublished": "2022-01-08T17:13:55Z",
+  "dateModified": "2022-01-08T17:13:55Z",
+  "mainEntityOfPage": {
+    "@type": "WebPage",
+    "@id": "https://beepsort.github.io/posts/pointers/"
+  },
+  "publisher": {
+    "@type": "Organization",
+    "name": "Beepsort Blog",
+    "logo": {
+      "@type": "ImageObject",
+      "url": "https://beepsort.github.io/favicon.ico"
+    }
+  }
+}
+</script>
+</head>
+
+<body class="" id="top">
+<script>
+    if (localStorage.getItem("pref-theme") === "dark") {
+        document.body.classList.add('dark');
+    } else if (localStorage.getItem("pref-theme") === "light") {
+        document.body.classList.remove('dark')
+    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.body.classList.add('dark');
+    }
+
+</script>
+
+<header class="header">
+    <nav class="nav">
+        <div class="logo">
+            <a href="https://beepsort.github.io/" accesskey="h" title="Beepsort Blog (Alt + H)">Beepsort Blog</a>
+            <span class="logo-switches">
+                <button id="theme-toggle" accesskey="t" title="(Alt + T)">
+                    <svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                    <svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+                        fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                        stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                </button>
+            </span>
+        </div>
+        <ul id="menu">
+        </ul>
+    </nav>
+</header>
+<main class="main">
+
+<article class="post-single">
+  <header class="post-header">
+    
+    <h1 class="post-title">
+      Pointers<sup><span class="entry-isdraft">&nbsp;&nbsp;[draft]</span></sup>
+    </h1>
+    <div class="post-meta"><span title='2022-01-08 17:13:55 +0000 UTC'>January 8, 2022</span>
+
+</div>
+  </header> 
+  <div class="post-content"><p>I see many people getting confused regarding pointers and over time I have noticed some common areas people get confused, so I decided to write a post explaining some of these areas.</p>
+<h1 id="the-theory-behind-pointers">The Theory behind Pointers<a hidden class="anchor" aria-hidden="true" href="#the-theory-behind-pointers">#</a></h1>
+<h2 id="some-background-definitions">Some background definitions<a hidden class="anchor" aria-hidden="true" href="#some-background-definitions">#</a></h2>
+<h3 id="lifetimes">Lifetimes<a hidden class="anchor" aria-hidden="true" href="#lifetimes">#</a></h3>
+<p>A lifetime describes when a variable is first given space in the program&rsquo;s memory and when that memory will be
+released.</p>
+<h3 id="the-stack">The Stack<a hidden class="anchor" aria-hidden="true" href="#the-stack">#</a></h3>
+<p>The stack is the most important area of memory. Every function call will allocate some space on the stack to store it&rsquo;s variables; this is called a function&rsquo;s stack frame. After a function returns, it&rsquo;s stack frame and all it&rsquo;s variables are deleted and will potentially be overwritten by any other future function calls.</p>
+<p>Variables created on the stack are assigned a size at compilation time, this means your source code must know the specific size required to store it on the stack. The stack is much smaller than the heap and has more possibility of filling up (a stack overflow); it is also very fast compared to the heap, especially on modern processors.</p>
+<h3 id="the-heap">The Heap<a hidden class="anchor" aria-hidden="true" href="#the-heap">#</a></h3>
+<p>The heap is a much larger area of memory than the stack. It stores data in an unordered manner, for any part of the program that requests to store data on the heap. Space on the heap must be allocated before use, so the area of the heap is known to be in use. After the data is no longer required to be stored on the heap, it needs to be deleted from the heap to allow the space to be used again for new data.</p>
+<h4 id="dynamic-sizing">Dynamic sizing<a hidden class="anchor" aria-hidden="true" href="#dynamic-sizing">#</a></h4>
+<p>The size of a stack frame for a specific function is decided at compile time, this means all variables assigned on the stack need to have a predefined size. If we do not know the size of some data until the program runs, then we may need to use the heap to allocate the specific amount needed.</p>
+<h4 id="sharing-data">Sharing data<a hidden class="anchor" aria-hidden="true" href="#sharing-data">#</a></h4>
+<p>If we want to access a single shared data resource at multiple points in the program, we can store the data on the heap and allow each area of the program to access the single location.</p>
+<h4 id="control-over-variables-lifetime">Control over variable&rsquo;s lifetime<a hidden class="anchor" aria-hidden="true" href="#control-over-variables-lifetime">#</a></h4>
+<p>If we do not want a variable to be deleted after the function it was created within ends, then this may be a reason to use the heap instead of the stack.</p>
+<h2 id="why-use-pointers">Why use pointers?<a hidden class="anchor" aria-hidden="true" href="#why-use-pointers">#</a></h2>
+<h3 id="reducing-the-amount-of-copying">Reducing the amount of copying<a hidden class="anchor" aria-hidden="true" href="#reducing-the-amount-of-copying">#</a></h3>
+<p>In C and C++, passing a value as a function parameter or assigning a value to a new variable will copy the direct value of the variable. In the case of large structs or objects, this can result in many unnecessary copies being made; as a result this can waste memory or slow down our code. This can also allow a function to modify the value of it&rsquo;s parameter, and for that modification to apply outside of that function.</p>
+<h3 id="using-the-heap">Using the heap<a hidden class="anchor" aria-hidden="true" href="#using-the-heap">#</a></h3>
+<p>We often do not want to allocate data on the stack and instead need to use the heap. When we use the heap, we must use pointers to access data stored on the heap, as well as control when the data is freed up from the heap.</p>
+<h2 id="what-is-a-pointer">What is a pointer?<a hidden class="anchor" aria-hidden="true" href="#what-is-a-pointer">#</a></h2>
+<p>When we create a variable, it is stored at a location specified by a memory address; a pointer is <strong>a variable that can store a memory address of another variable</strong>. Notice that a pointer is itself a variable; this means a pointer is subject to all the same details as a regular variable. Pointers need to be initialized just like regular variables, they can be stored on both the stack and heap, and they themselves can also have pointers point to them too! When we create a pointer, we are creating space to store a memory address, but not creating anything for the pointer to actually point to.</p>
+<h1 id="practical-usage">Practical usage<a hidden class="anchor" aria-hidden="true" href="#practical-usage">#</a></h1>
+<h2 id="pointer-types">Pointer types<a hidden class="anchor" aria-hidden="true" href="#pointer-types">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>a_ptr;
+</code></pre></div><p>This type definition says two things:</p>
+<ul>
+<li><code>*a</code> means <code>a</code> is a pointer variable</li>
+<li><code>int</code> means <code>a</code> points to an integer variable</li>
+</ul>
+<h2 id="dereferencing">Dereferencing<a hidden class="anchor" aria-hidden="true" href="#dereferencing">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> a <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>a_ptr;
+</code></pre></div><p>We are using the <code>*</code> operator again, but this time it is in an <em>expression</em> rather than a <em>type definition</em>. When we use the <code>*</code> operator in an expression it behaves as the dereference operator. The dereference operator will take the value stored in the pointer (a memory address) and look at the location in memory at that memory address.</p>
+<p>In this example, the program takes multiple steps:</p>
+<ol>
+<li>load the <em>memory address</em> stored at <code>a_ptr</code></li>
+<li>read the <em>value</em> stored at the <em>memory address</em></li>
+<li>store the <em>value</em> in <code>b</code></li>
+</ol>
+<p>It is also possible to write to the location of a pointer</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#f92672">*</span>a_ptr <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span>;
+</code></pre></div><p>In this second example, the program performs the following:</p>
+<ol>
+<li>load the <em>memory address</em> stored at <code>a_ptr</code></li>
+<li>store <code>7</code> as the <em>value</em> of the location pointed to by the <em>memory address</em></li>
+</ol>
+<p>Note that in both of these examples, we haven&rsquo;t initialized the value of <code>a_ptr</code>. This is a big problem, as it means we are trying to access an undefined memory location. This could mean that our program tries to read/write to an area of memory it is not allowed to, which would cause a crash (segmentation fault); or even worse, our program could read/write an allowed part of our program&rsquo;s memory and continue with corrupted data! To stop this, lets look at one of the ways we can assign a value to a pointer.</p>
+<h2 id="address-operator">Address operator<a hidden class="anchor" aria-hidden="true" href="#address-operator">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> a <span style="color:#f92672">=</span> <span style="color:#ae81ff">7</span>;
+<span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>a_ptr <span style="color:#f92672">=</span> <span style="color:#f92672">&amp;</span>a;
+</code></pre></div><p>Here we use the address operator <code>&amp;</code>. The address operator will get the memory address of it&rsquo;s operand. So like before, let&rsquo;s break the program down:</p>
+<ol>
+<li>create a memory location to store an integer <code>a</code></li>
+<li>create a memory location to store a pointer <code>a_ptr</code></li>
+<li>store 7 as the <em>value</em> of <code>a</code></li>
+<li>get the <em>memory address</em> of <code>a</code> as specified by <code>&amp;a</code></li>
+<li>store the <em>memory address</em> of <code>a</code> as the <em>value</em> of <code>a_ptr</code> (remember <code>a_ptr</code> is itself a variable that holds a memory address as it&rsquo;s value)</li>
+</ol>
+<h2 id="arrays">Arrays<a hidden class="anchor" aria-hidden="true" href="#arrays">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> arr[<span style="color:#ae81ff">5</span>] <span style="color:#f92672">=</span> {<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">5</span>};
+</code></pre></div><p>In C, arrays are a special type of pointer, which has an additional size component as part of the type. When an array is passed to a function as a parameter, the type decays to a regular pointer (the size information is lost). Other than this, arrays are simply just pointers to the first element in the array.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> arr[<span style="color:#ae81ff">5</span>] <span style="color:#f92672">=</span> {<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">5</span>};
+<span style="color:#f92672">*</span>arr <span style="color:#f92672">=</span> <span style="color:#ae81ff">10</span>;
+</code></pre></div><p>This would modify the first element (<code>arr[0]</code>) to be 10, leaving the array to be <code>{10,2,3,4,5}</code>.</p>
+<h2 id="address-arithmetic">Address arithmetic<a hidden class="anchor" aria-hidden="true" href="#address-arithmetic">#</a></h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> arr[<span style="color:#ae81ff">5</span>] <span style="color:#f92672">=</span> {<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">1</span>,<span style="color:#ae81ff">2</span>,<span style="color:#ae81ff">3</span>,<span style="color:#ae81ff">5</span>};
+<span style="color:#66d9ef">int</span> a <span style="color:#f92672">=</span> <span style="color:#f92672">*</span>(arr<span style="color:#f92672">+</span><span style="color:#ae81ff">2</span>);
+<span style="color:#66d9ef">int</span> b <span style="color:#f92672">=</span> arr[<span style="color:#ae81ff">2</span>];
+</code></pre></div><p>It is possible for us to manipulate the value of a pointer, which will modify the memory location that is being pointed to. In this example, both a and b will be the same value (3).</p>
+<p>By adding 2 to the pointer, we move 2 elements forwards in memory and arrays are stored contiguously (the elements are stored directly one after another in memory). Address arithmetic modifies the memory address by increments the size of the data type being pointed to, in this case an integer, which is 4 bytes in most 64-bit machines.</p>
+<h2 id="heap-allocation">Heap allocation<a hidden class="anchor" aria-hidden="true" href="#heap-allocation">#</a></h2>
+<h3 id="c">C<a hidden class="anchor" aria-hidden="true" href="#c">#</a></h3>
+<h4 id="malloc">malloc<a hidden class="anchor" aria-hidden="true" href="#malloc">#</a></h4>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>a_ptr <span style="color:#f92672">=</span> malloc(<span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">int</span>));
+</code></pre></div><p>To use the heap we need to allocate space for our data, let&rsquo;s break our program down again:</p>
+<ol>
+<li>create a memory location to store a pointer <code>a_ptr</code></li>
+<li>call malloc and request memory on the heap to store a single integer</li>
+<li>receive a pointer from malloc to the allocated memory location</li>
+<li>store the returned pointer as the <em>value</em> of <code>a_ptr</code></li>
+</ol>
+<p>At this point we are free to use this memory location as we have with previous pointer variables, except it is stored on the heap instead of the stack now and has the trade offs mentioned earlier in the theory section.</p>
+<p>One note regarding memory allocation with malloc, is memory allocation can fail if there is no space for the memory that was requested, in this circumstance malloc will return 0 (NULL).</p>
+<p>Allocating an array in C requires calculating the size of the data type, multiplied by the number of elements.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>a_ptr <span style="color:#f92672">=</span> malloc(<span style="color:#ae81ff">4</span><span style="color:#f92672">*</span><span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">int</span>));
+</code></pre></div><p>This creates an array of 4 integers on the heap.</p>
+<h4 id="free">free<a hidden class="anchor" aria-hidden="true" href="#free">#</a></h4>
+<p>As mentioned earlier, once we allocate memory on the heap, we also need to free it after we are finished with it, we do this using the free function.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c" data-lang="c"><span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>a_ptr <span style="color:#f92672">=</span> malloc(<span style="color:#66d9ef">sizeof</span>(<span style="color:#66d9ef">int</span>));
+free(a_ptr);
+</code></pre></div><p>Calling free marks the memory we were previously using as being able to be used elsewhere. If we were not to do this, we can cause a memory leak; where memory usage of our program keeps growing until it potentially crashes.</p>
+<p>Freeing arrays is no different to any other data.</p>
+<h3 id="c-1">C++<a hidden class="anchor" aria-hidden="true" href="#c-1">#</a></h3>
+<h4 id="new">new<a hidden class="anchor" aria-hidden="true" href="#new">#</a></h4>
+<p>C++ has it&rsquo;s own version of the malloc function with the <code>new</code> keyword. It is somewhat similar to malloc, with a few differences:</p>
+<ul>
+<li>Initializes created objects by calling their constructors</li>
+<li>Throws an exception on memory allocation failure instead of returning 0</li>
+<li>Does not require using sizeof() calculations</li>
+<li>Has a specific array syntax</li>
+</ul>
+<p>Creating a heap allocated integer</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>a_ptr <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span>;
+</code></pre></div><p>Creating a heap allocated array of 4 integers</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">int</span> <span style="color:#f92672">*</span>a_ptr <span style="color:#f92672">=</span> <span style="color:#66d9ef">new</span> <span style="color:#66d9ef">int</span>[<span style="color:#ae81ff">4</span>];
+</code></pre></div><h4 id="delete">delete<a hidden class="anchor" aria-hidden="true" href="#delete">#</a></h4>
+<p>C++ also has it&rsquo;s own version of the free function with the <code>delete</code> keyword. Again it is similar to free, with a few differences:</p>
+<ul>
+<li>Calls object destructors</li>
+<li>Has a specific array syntax</li>
+</ul>
+<p>Deleting a heap allocated variable</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">delete</span> a_ptr;
+</code></pre></div><p>Deleting a heap allocated array</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4"><code class="language-c++" data-lang="c++"><span style="color:#66d9ef">delete</span> [] a_ptr;
+</code></pre></div>
+
+  </div>
+
+  <footer class="post-footer">
+  </footer>
+</article>
+    </main>
+    
+<footer class="footer">
+    <span>&copy; 2022 <a href="https://beepsort.github.io/">Beepsort Blog</a></span>
+    <span>
+        Powered by
+        <a href="https://gohugo.io/" rel="noopener noreferrer" target="_blank">Hugo</a> &
+        <a href="https://git.io/hugopapermod" rel="noopener" target="_blank">PaperMod</a>
+    </span>
+</footer>
+<a href="#top" aria-label="go to top" title="Go to Top (Alt + G)" class="top-link" id="top-link" accesskey="g">
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentColor">
+        <path d="M12 6H0l6-6z" />
+    </svg>
+</a>
+
+<script>
+    let menu = document.getElementById('menu')
+    if (menu) {
+        menu.scrollLeft = localStorage.getItem("menu-scroll-position");
+        menu.onscroll = function () {
+            localStorage.setItem("menu-scroll-position", menu.scrollLeft);
+        }
+    }
+
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener("click", function (e) {
+            e.preventDefault();
+            var id = this.getAttribute("href").substr(1);
+            if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView({
+                    behavior: "smooth"
+                });
+            } else {
+                document.querySelector(`[id='${decodeURIComponent(id)}']`).scrollIntoView();
+            }
+            if (id === "top") {
+                history.replaceState(null, null, " ");
+            } else {
+                history.pushState(null, null, `#${id}`);
+            }
+        });
+    });
+
+</script>
+<script>
+    var mybutton = document.getElementById("top-link");
+    window.onscroll = function () {
+        if (document.body.scrollTop > 800 || document.documentElement.scrollTop > 800) {
+            mybutton.style.visibility = "visible";
+            mybutton.style.opacity = "1";
+        } else {
+            mybutton.style.visibility = "hidden";
+            mybutton.style.opacity = "0";
+        }
+    };
+
+</script>
+<script>
+    document.getElementById("theme-toggle").addEventListener("click", () => {
+        if (document.body.className.includes("dark")) {
+            document.body.classList.remove('dark');
+            localStorage.setItem("pref-theme", 'light');
+        } else {
+            document.body.classList.add('dark');
+            localStorage.setItem("pref-theme", 'dark');
+        }
+    })
+
+</script>
+</body>
+
+</html>
