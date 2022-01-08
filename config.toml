@@ -1,0 +1,3 @@
+baseURL = 'https://beepsort.github.io/'
+languageCode = 'en-gb'
+title = 'Beepsort Blog'
